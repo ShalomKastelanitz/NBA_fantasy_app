@@ -37,8 +37,7 @@ def fetch_and_process_data():
         season_data = fetch_data(season)
         if season_data:
             for player_data in season_data:
-                player_id = player_data['playerId']  # נניח שיש לך מזהה ייחודי לשחקן
-
+                player_id = player_data['playerId']
                 if player_id in data:
                     # הוספת עונה אם היא לא קיימת ברשימה
                     if season not in data[player_id]['seasons']:
