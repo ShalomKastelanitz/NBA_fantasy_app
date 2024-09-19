@@ -3,6 +3,8 @@ from db import db
 from models import Player
 from services1.Bringing_details_players import fetch_and_process_data
 from routes.route_player import players_bp
+from routes.routes_team import team_bp
+
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///nba_players.db'
@@ -35,6 +37,7 @@ with app.app_context():
 
 
 
+app.register_blueprint(team_bp, url_prefix='/api/teams')
 
 app.register_blueprint(players_bp, url_prefix='/api/players')
 if __name__ == '__main__':

@@ -39,3 +39,34 @@ class Player(db.Model):
         }
 
 
+class Team(db.Model):
+    __tablename__ = 'teams'
+
+    id = db.Column(db.Integer, primary_key=True)
+    team_name = db.Column(db.String(100), unique=True, nullable=False)
+
+    # מזהי השחקנים בקבוצה (5 שחקנים)
+    player1_id = db.Column(db.Integer, nullable=False)
+    player2_id = db.Column(db.Integer, nullable=False)
+    player3_id = db.Column(db.Integer, nullable=False)
+    player4_id = db.Column(db.Integer, nullable=False)
+    player5_id = db.Column(db.Integer, nullable=False)
+
+    def __init__(self, team_name, player1_id, player2_id, player3_id, player4_id, player5_id):
+        self.team_name = team_name
+        self.player1_id = player1_id
+        self.player2_id = player2_id
+        self.player3_id = player3_id
+        self.player4_id = player4_id
+        self.player5_id = player5_id
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'team_name': self.team_name,
+            'player1_id': self.player1_id,
+            'player2_id': self.player2_id,
+            'player3_id': self.player3_id,
+            'player4_id': self.player4_id,
+            'player5_id': self.player5_id
+        }
