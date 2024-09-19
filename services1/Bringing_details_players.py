@@ -33,13 +33,14 @@ def fetch_and_process_data():
     seasons = [2022, 2023, 2024]
     data = {}
 
+    # איסוף נתונים עבור כל עונה
     for season in seasons:
         season_data = fetch_data(season)
         if season_data:
             for player_data in season_data:
                 player_id = player_data['playerId']
                 if player_id in data:
-                    # הוספת עונה אם היא לא קיימת ברשימה
+                    # הוספת עונה אם היא לא קיימת
                     if season not in data[player_id]['seasons']:
                         data[player_id]['seasons'].append(season)
                     # עדכון נתונים סה"כ
@@ -61,7 +62,7 @@ def fetch_and_process_data():
                                                               player_data.get('threeAttempts', 0))
                     }
 
-    # עיבוד PPG Ratio בסוף התהליך לאחר חישוב כל העונות
+    # חישוב PPG Ratio לכל שחקן
     for player_id, player in data.items():
         player['ppg_ratio'] = calculate_ppg_ratio(player['total_points'], player['total_games'])
 

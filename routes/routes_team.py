@@ -5,7 +5,6 @@ from models import db, Team, Player
 team_bp = Blueprint('teams', __name__)
 
 
-# 1. אנדפוינט ליצירת קבוצה
 @team_bp.route('', methods=['POST'])
 def create_team():
     data = request.get_json()
@@ -15,6 +14,18 @@ def create_team():
     # בדיקה אם סופקו בדיוק 5 שחקנים
     if len(player_ids) != 5:
         return jsonify({'error': 'קבוצה חייבת לכלול בדיוק 5 שחקנים'}), 400
+
+    # בדיקה אם כל השחקנים קיימים
+    players = Player.query.filter(Player.id.in_(player_ids)).all()
+    if len(players) != 5:
+        return jsonify({'error': 'יש שחקנים במזהים שסופקו שאינם קיימים'}), 400
+
+    # בדיקה אם כל עמדה מיוצגת
+    positions = {player.position for player in players}
+    required_positions = {'PG', 'SG', 'SF', 'PF', 'C'}
+
+    if not required_positions.issubset(positions):
+        return jsonify({'error': 'הקבוצה חייבת לכלול שחקן מכל עמדה (PG, SG, SF, PF, C)'}), 400
 
     # יצירת הקבוצה עם מזהי השחקנים
     new_team = Team(
@@ -30,7 +41,6 @@ def create_team():
     db.session.commit()
 
     return jsonify({'message': 'קבוצה נוצרה בהצלחה', 'team_id': new_team.id}), 201
-
 
 # 2. אנדפוינט לעריכת קבוצה
 @team_bp.route('/<int:team_id>', methods=['PUT'])
@@ -68,21 +78,31 @@ def delete_team(team_id):
 # 4. אנדפוינט לקבלת פרטי קבוצה
 @team_bp.route('/<int:team_id>', methods=['GET'])
 def get_team(team_id):
-    team = Team.query.get_or_404(team_id)
+    team = Team.query.get(team_id)
 
-    team_data = {
+    if not team:
+        return jsonify({'error': 'הקבוצה לא נמצאה'}), 404
+
+    # קבלת כל המזהים של השחקנים בקבוצה
+    player_ids = [
+        team.player1_id,
+        team.player2_id,
+        team.player3_id,
+        team.player4_id,
+        team.player5_id
+    ]
+
+    #  שאילתה כדי לקבל את כל פרטי השחקנים לפי המזהים
+    players = Player.query.filter(Player.id.in_(player_ids)).all()
+
+    # הפיכת פרטי השחקנים ל-json באמצעות המתודה to_dict() של המודל Player
+    player_details = [player.to_dict() for player in players]
+
+    # החזרת פרטי הקבוצה יחד עם פרטי השחקנים
+    return jsonify({
         'team_name': team.team_name,
-        'player_ids': [
-            team.player1_id,
-            team.player2_id,
-            team.player3_id,
-            team.player4_id,
-            team.player5_id
-        ]
-    }
-
-    return jsonify(team_data)
-
+        'players': player_details
+    })
 
 # 5. אנדפוינט להשוואת קבוצות
 @team_bp.route('/compare', methods=['GET'])

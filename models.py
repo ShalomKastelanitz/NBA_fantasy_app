@@ -12,8 +12,10 @@ class Player(db.Model):
     seasons = db.Column(db.Text, nullable=False)  # שינוי ל-Text
     two_percent = db.Column(db.Float, nullable=False)
     three_percent = db.Column(db.Float, nullable=False)
+    ppg_ratio_vs_position = db.Column(db.Float, nullable=False)  # יחס מול ממוצע העמדה
 
-    def __init__(self, name, position, points, team, atr, ppg_ratio, seasons, two_percent, three_percent):
+
+    def __init__(self, name, position, points, team, atr, ppg_ratio, seasons, two_percent, three_percent,ppg_ratio_vs_position):
         self.name = name
         self.position = position
         self.points = points
@@ -23,7 +25,7 @@ class Player(db.Model):
         self.seasons = json.dumps(seasons)  # המרת הרשימה ל-JSON
         self.two_percent = two_percent
         self.three_percent = three_percent
-
+        self.ppg_ratio_vs_position = ppg_ratio_vs_position
     def to_dict(self):
         return {
             'id': self.id,
@@ -35,7 +37,8 @@ class Player(db.Model):
             'ppg_ratio': self.ppg_ratio,
             'seasons': json.loads(self.seasons),  # המרת ה-JSON חזרה לרשימה
             'two_percent': self.two_percent,
-            'three_percent': self.three_percent
+            'three_percent': self.three_percent,
+            'ppg_ratio_vs_position': self.ppg_ratio_vs_position
         }
 
 

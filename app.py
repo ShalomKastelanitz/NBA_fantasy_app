@@ -30,7 +30,9 @@ with app.app_context():
                 ppg_ratio=player['ppg_ratio'],
                 seasons=player['seasons'],  # הוספת רשימת עונות
                 two_percent=player['two_percent'],  # אחוזי קליעה לשתיים
-                three_percent=player['three_percent']  # אחוזי קליעה לשלוש
+                three_percent=player['three_percent'] , # אחוזי קליעה לשלוש
+                ppg_ratio_vs_position=player['ppg_ratio']  # יחס הנקודות מול ממוצע העמדה
+
             )
             db.session.add(new_player)
     db.session.commit()
